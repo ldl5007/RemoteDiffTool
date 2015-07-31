@@ -105,7 +105,7 @@ class myFtpClass(FtpInfo):
             returnStatus = True;
 
         except error_perm as e: #you can specify type of Exception also
-            print(rc)
+            print(str(e))
 
         rc = ftp.quit()
         print(rc)
@@ -135,7 +135,7 @@ class myFtpClass(FtpInfo):
             print('LISTRC :' + rc)
             
         except error_perm as e:
-           print('Error :' + str(e))
+            print('Error :' + str(e))
 
         ftp.quit()   
         return self.listOutput
@@ -164,7 +164,7 @@ class myFtpClass(FtpInfo):
             returnStatus = True;
 
         except error_perm as e: #you can specify type of Exception also
-            print(rc)
+            print(str(e))
 
         rc = ftp.quit()
         print(rc)
@@ -173,7 +173,6 @@ class myFtpClass(FtpInfo):
         
     # Process the call back from list 
     def listCallBack(self, string):
-        print(string)
         string = string.strip()
         strArr = string.split(' ')
         

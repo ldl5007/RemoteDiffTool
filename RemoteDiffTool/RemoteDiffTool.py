@@ -21,7 +21,6 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
     compareFile1 = 'tempFile1'
     compareFile2 = 'tempFile2'
     
-    listOutput = []
     winMergeDir = os.getcwd() + '\winMerge\WinMergePortable.exe'
     
     def __init__(self, parent=None):
@@ -61,10 +60,13 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
         else:
             file1 = "'" + file1 + "'"
             os.chdir(self.compareDir)
-            self.ftp1.validateRemoteFile(file1)
+#            self.ftp1.validateRemoteFile(file1)
             if not self.ftp1.downloadFile(file1, self.compareFile1):
                 self.logError("Download {} failed".format(file1))
                 return
+#            else:
+#                self.logError("Validation {} failed".format(file1))
+#                return    
 
         if self.radioButton_Path2_Local.isChecked():
             self.compareFile2 = file2
@@ -72,16 +74,18 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
         else:
             file2 = "'" + file2 + "'"
             os.chdir(self.compareDir)
-            self.ftp2.validateRemoteFile(file2)
+#            if self.ftp2.validateRemoteFile(file2):
             if not self.ftp2.downloadFile(file2, self.compareFile2):
                 self.logError("Download {} failed".format(file2))
                 return
+#            else:
+#                self.logError("Validation {} failed".format(file2))
+#                return   
         
         self.logMessage('Start comparing 2 files')
         self.invokeCompare(self.compareFile1, self.compareFile2)
     
         
-
     def btn_Browse1_Clicked(self):
         fileName = ''
         if self.radioButton_Path1_Local.isChecked():
@@ -117,9 +121,13 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
 
     def btn_Remoted1_Clicked(self):
         self.ftp1 = myFtpClass(None)
+        if not self.ftp1.ftpInfo:
+            self.logWarning("Remote system 1 is not set")
 
     def btn_Remoted2_Clicked(self):
         self.ftp2 = myFtpClass(None)
+        if not self.ftp2.ftpInfo:
+            self.logWarning("Remote system 2 is not set")
 
     def logWarning(self, message):
         self.logMessage(message, "WARNING")
@@ -139,9 +147,6 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
 
     def invokeCompare(self, file1, file2):
         subprocess.call([self.winMergeDir, file1, file2])
-
-
-
 
 
 app = QtGui.QApplication(sys.argv)

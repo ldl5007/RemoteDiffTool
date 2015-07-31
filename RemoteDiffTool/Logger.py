@@ -16,4 +16,3 @@ def setup_custom_logger(name):
     logger.addHandler(handler)
     logger.addHandler(fldHandler)
     return logger
-
