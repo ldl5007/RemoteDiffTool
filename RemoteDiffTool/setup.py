@@ -16,8 +16,10 @@ from cx_Freeze import setup, Executable
 application_title = "Remote Diff Tool" #what you want to application to be called
 main_python_file = "RemoteDiffTool.py" #the name of the python file you use to run the program
 
-include_files = ['RemoteDiffTool.ui',
-                 'RemoteBrowse.ui']
+include_files = ['ui/',
+                 'log/',
+                 'winMerge/',
+                 'Temp/']
 
 base = None
 if sys.platform == "win32":

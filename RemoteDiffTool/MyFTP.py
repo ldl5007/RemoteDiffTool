@@ -1,9 +1,11 @@
 # My FTP module.  This module is responsible to communicate with the remote server
 
 import sys
-from PyQt4 import QtCore, QtGui, uic
+import Logger
+from PyQt4 import QtGui, uic
 from ftplib import FTP, error_perm
 
+logger = Logger.setup_custom_logger('root')
 from_class = uic.loadUiType("ui\FtpInfo.ui")[0]
 
 class ListMember(object):
@@ -46,6 +48,12 @@ class FtpInfoDialog(QtGui.QDialog, from_class):
         # validate user input info
         if myFtpClass.validateFtpInfo(self.ftpInfo):
             self.close()
+        else:
+            del self.ftpInfo
+            self.lineEdit_UserName.setText('')
+            self.lineEdit_Password.setText('')
+            self.ftpInfo = None
+
 
     def btn_Cancel_Clicked(self):
         self.close()
@@ -55,6 +63,7 @@ class myFtpClass(FtpInfo):
     
     def __init__(self, ftpInfo):
         
+        self.errMsg = ""
         self.listOutput = FtpResult()
         if not ftpInfo:
             self.ftpInfo = self.getFtpInfo()
@@ -75,12 +84,12 @@ class myFtpClass(FtpInfo):
 
         try:
             rc = ftp.login(user=ftpInfo.userName, passwd=ftpInfo.password)
-            print(rc)
+            logger.info(rc)
 
             returnStatus = True
             
         except error_perm as e:
-            print('Error :' + str(e))
+            logger.info('Error :' + str(e))
 
         ftp.quit()
         return returnStatus
@@ -88,27 +97,28 @@ class myFtpClass(FtpInfo):
     def validateRemoteFile(self, remoteFile):
         returnStatus = False;
 
-        print('Validate ' + remoteFile);
+        logger.info('Validate ' + remoteFile);
 
         ftp = FTP(self.ftpInfo.remoteSystem) #For now just use CA11
         try:
             rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
-            print(rc)
+            logger.info(rc)
 
             rc = ftp.cwd(remoteFile)
-            print(rc)
+            logger.info(rc)
 
             del self.listOutput[:]
             rc = ftp.retrlines('LIST', self.listCallBack)
-            print(rc)
+            logger.info(rc)
             
             returnStatus = True;
 
         except error_perm as e: #you can specify type of Exception also
-            print(str(e))
+            self.errMsg = str(e)
+            logger.info(str(e))
 
         rc = ftp.quit()
-        print(rc)
+        logger.info(rc)
 
         return returnStatus
 
@@ -119,23 +129,24 @@ class myFtpClass(FtpInfo):
         
         try:
             rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
-            print(rc)
+            logger.info(rc)
             
             rc = ftp.cwd("'" + newPath + "'")
             if 'partitioned data set' in rc:
                 self.listOutput.isPds = True
             else:
                 self.listOutput.isPds = False
-            print(rc)
+            logger.info(rc)
             
             strArr = rc.split("\"")
             self.listOutput.currentDir = strArr[1]
 
             rc = ftp.retrlines('LIST', self.listCallBack)
-            print('LISTRC :' + rc)
+            logger.info('LISTRC :' + rc)
             
         except error_perm as e:
-            print('Error :' + str(e))
+            self.errMsg = str(e)
+            logger.info('Error :' + str(e))
 
         ftp.quit()   
         return self.listOutput
@@ -147,14 +158,14 @@ class myFtpClass(FtpInfo):
         ftp = FTP(self.ftpInfo.remoteSystem) #For now just use CA11
         try:
             rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
-            print(rc)
+            logger.info(rc)
 
-            print('Downloading : ' + fileName)
+            logger.info('Downloading : ' + fileName)
 
             file = open(destName, 'w')
             del self.listOutput.data[:]
             rc = ftp.retrlines('RETR '+ fileName, self.downloadCallBack)
-            print(rc)
+            logger.info(rc)
 
             for msg in self.listOutput.data:
                 file.write(msg + '\n')
@@ -164,10 +175,11 @@ class myFtpClass(FtpInfo):
             returnStatus = True;
 
         except error_perm as e: #you can specify type of Exception also
-            print(str(e))
+            self.errMsg = str(e)
+            logger.info(str(e))
 
         rc = ftp.quit()
-        print(rc)
+        logger.info(rc)
 
         return returnStatus
         

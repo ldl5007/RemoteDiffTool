@@ -11,7 +11,6 @@ from RemoteBrowse import RemoteBrowseClass
 from MyFTP import myFtpClass
 
 logger = Logger.setup_custom_logger('root')
-logger.debug('testing')
 
 from_class = uic.loadUiType("ui\RemoteDiffTool.ui")[0]   # load the ui
 
@@ -59,11 +58,20 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
 
         else:
             file1 = "'" + file1 + "'"
+            
+            if not (os.path.exists(self.compareDir)):
+                os.makedirs(self.compareDir)
+                
             os.chdir(self.compareDir)
+            
 #            self.ftp1.validateRemoteFile(file1)
+            self.logMessage("Downloading {} ...".format(file1))
             if not self.ftp1.downloadFile(file1, self.compareFile1):
                 self.logError("Download {} failed".format(file1))
+                self.logError("Error info: {}".format(self.ftp1.errMsg))
                 return
+            else:
+                self.logMessage("Download {} completed".format(file1))
 #            else:
 #                self.logError("Validation {} failed".format(file1))
 #                return    
@@ -73,11 +81,20 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
 
         else:
             file2 = "'" + file2 + "'"
+            
+            if not (os.path.exists(self.compareDir)):
+                os.makedirs(self.compareDir)
+                
             os.chdir(self.compareDir)
+            
 #            if self.ftp2.validateRemoteFile(file2):
+            self.logMessage("Downloading {} ...".format(file2))
             if not self.ftp2.downloadFile(file2, self.compareFile2):
                 self.logError("Download {} failed".format(file2))
+                self.logError("Error info: {}".format(self.ftp2.errMsg))
                 return
+            else:
+                self.logMessage("Download {} completed".format(file2))
 #            else:
 #                self.logError("Validation {} failed".format(file2))
 #                return   
@@ -123,11 +140,15 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
         self.ftp1 = myFtpClass(None)
         if not self.ftp1.ftpInfo:
             self.logWarning("Remote system 1 is not set")
+        else:
+            self.logMessage("Remote System 1: " + self.ftp1.ftpInfo.remoteSystem)
 
     def btn_Remoted2_Clicked(self):
         self.ftp2 = myFtpClass(None)
         if not self.ftp2.ftpInfo:
             self.logWarning("Remote system 2 is not set")
+        else:
+            self.logMessage("Remote System 1: " + self.ftp1.ftpInfo.remoteSystem)
 
     def logWarning(self, message):
         self.logMessage(message, "WARNING")
@@ -144,6 +165,7 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
         self.textEdit_Log.insertPlainText(message + "\n")
         self.textEdit_Log.moveCursor(QtGui.QTextCursor.EndOfLine)
         self.textEdit_Log.setTextColor(QtGui.QColor('black'))
+        logger.info(message)
 
     def invokeCompare(self, file1, file2):
         subprocess.call([self.winMergeDir, file1, file2])

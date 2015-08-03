@@ -1,11 +1,13 @@
 # Remote Browser Dialog using PyQt
 
 import sys
+import Logger
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import pyqtSlot,SIGNAL,SLOT
 from PyQt4.QtGui  import QStandardItem, QAbstractItemView
-from ftplib import FTP, error_perm
-from MyFTP import myFtpClass, FtpInfo, FtpResult, ListMember
+from MyFTP import myFtpClass, ListMember
+
+logger = Logger.setup_custom_logger('root')
 
 from_class = uic.loadUiType("ui\RemoteBrowse.ui")[0]   #load the ui
 
@@ -51,7 +53,7 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
         comboBox = self.comboBox_Path
 
         newPath = comboBox.currentText()
-        print(newPath)
+        logger.info(newPath)
 
         listOutput = self.ftpClass.listRemotePath(newPath)
         self.updateTreeView(listOutput)
