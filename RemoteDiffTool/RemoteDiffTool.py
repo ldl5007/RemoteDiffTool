@@ -91,7 +91,6 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
             self.logMessage("Downloading {} ...".format(file2))
             if not self.ftp2.downloadFile(file2, self.compareFile2):
                 self.logError("Download {} failed".format(file2))
-                self.logError("Error info: {}".format(self.ftp2.errMsg))
                 return
             else:
                 self.logMessage("Download {} completed".format(file2))
@@ -139,13 +138,16 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
     def btn_Remoted1_Clicked(self):
         self.ftp1 = myFtpClass(None)
         if not self.ftp1.ftpInfo:
+            self.radioButton_Path1_Local.toggle()
             self.logWarning("Remote system 1 is not set")
         else:
             self.logMessage("Remote System 1: " + self.ftp1.ftpInfo.remoteSystem)
+            
 
     def btn_Remoted2_Clicked(self):
         self.ftp2 = myFtpClass(None)
         if not self.ftp2.ftpInfo:
+            self.radioButton_Path2_Local.toggle()
             self.logWarning("Remote system 2 is not set")
         else:
             self.logMessage("Remote System 1: " + self.ftp1.ftpInfo.remoteSystem)

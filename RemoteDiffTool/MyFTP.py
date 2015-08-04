@@ -3,7 +3,8 @@
 import sys
 import Logger
 from PyQt4 import QtGui, uic
-from ftplib import FTP, error_perm
+from ftplib import FTP, all_errors
+from Logger import MessageBox
 
 logger = Logger.setup_custom_logger('root')
 from_class = uic.loadUiType("ui\FtpInfo.ui")[0]
@@ -31,7 +32,6 @@ class FtpInfoDialog(QtGui.QDialog, from_class):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.errMessage = ''
         self.ftpInfo = None
         self.pushButton_Ok.clicked.connect(self.btn_Ok_Clicked)
         self.pushButton_Cancel.clicked.connect(self.btn_Cancel_Clicked)
@@ -77,30 +77,42 @@ class myFtpClass(FtpInfo):
         
         return dialog.ftpInfo
 
+#
+#
+#
+
     @staticmethod
     def validateFtpInfo(ftpInfo):
         returnStatus = False
-        ftp = FTP(ftpInfo.remoteSystem)
 
         try:
+            ftp = FTP(ftpInfo.remoteSystem)
+            
             rc = ftp.login(user=ftpInfo.userName, passwd=ftpInfo.password)
             logger.info(rc)
 
+            ftp.quit()
+            
             returnStatus = True
             
-        except error_perm as e:
+        except all_errors as e:
+            MessageBox(str(e))
             logger.info('Error :' + str(e))
 
-        ftp.quit()
         return returnStatus
+
+#
+#
+#
 
     def validateRemoteFile(self, remoteFile):
         returnStatus = False;
 
         logger.info('Validate ' + remoteFile);
 
-        ftp = FTP(self.ftpInfo.remoteSystem) #For now just use CA11
         try:
+            ftp = FTP(self.ftpInfo.remoteSystem) #For now just use CA11
+            
             rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
             logger.info(rc)
 
@@ -110,24 +122,25 @@ class myFtpClass(FtpInfo):
             del self.listOutput[:]
             rc = ftp.retrlines('LIST', self.listCallBack)
             logger.info(rc)
+
+            rc = ftp.quit()            
+            logger.info(rc)
             
             returnStatus = True;
 
-        except error_perm as e: #you can specify type of Exception also
-            self.errMsg = str(e)
+        except all_errors as e: #you can specify type of Exception also
+            MessageBox(str(e))
             logger.info(str(e))
-
-        rc = ftp.quit()
-        logger.info(rc)
 
         return returnStatus
 
 
     def listRemotePath(self, newPath):	
-        ftp = FTP(self.ftpInfo.remoteSystem)
         del self.listOutput.data[:]
         
         try:
+            ftp = FTP(self.ftpInfo.remoteSystem)
+            
             rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
             logger.info(rc)
             
@@ -144,19 +157,21 @@ class myFtpClass(FtpInfo):
             rc = ftp.retrlines('LIST', self.listCallBack)
             logger.info('LISTRC :' + rc)
             
-        except error_perm as e:
-            self.errMsg = str(e)
+            ftp.quit()   
+            
+        except all_errors as e:
+            MessageBox(str(e))
             logger.info('Error :' + str(e))
 
-        ftp.quit()   
         return self.listOutput
 
 
     def downloadFile(self, fileName, destName):
         returnStatus = False;
 
-        ftp = FTP(self.ftpInfo.remoteSystem) #For now just use CA11
         try:
+            ftp = FTP(self.ftpInfo.remoteSystem) #For now just use CA11
+                    
             rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
             logger.info(rc)
 
@@ -171,15 +186,17 @@ class myFtpClass(FtpInfo):
                 file.write(msg + '\n')
 
             file.close()
+            
+            rc = ftp.quit()
+            logger.info(rc)
 
             returnStatus = True;
 
-        except error_perm as e: #you can specify type of Exception also
-            self.errMsg = str(e)
+        except all_errors as e: #you can specify type of Exception also
+            MessageBox(str(e))
             logger.info(str(e))
 
-        rc = ftp.quit()
-        logger.info(rc)
+
 
         return returnStatus
         
