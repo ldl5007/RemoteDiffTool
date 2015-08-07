@@ -6,7 +6,7 @@ from PyQt4 import QtGui, uic
 from ftplib import FTP, all_errors
 from Logger import MessageBox
 
-logger = Logger.setup_custom_logger('root')
+logger = Logger.setup_custom_logger(__name__)
 from_class = uic.loadUiType("ui\FtpInfo.ui")[0]
 
 class ListMember(object):
@@ -15,13 +15,23 @@ class ListMember(object):
         self.type = ftype
 
 class FtpInfo(object):
+    ZVM = 'ZVM'
+    ZOS = 'ZOS'
+    USS = 'USS'
+    
     def __init__(self, system, name, password):
         self.remoteSystem = system
         self.userName     = name
         self.password     = password
+        self.systemType   = None
 
 class FtpResult(object):
+    PDS = 'PDS'
+    PS  = 'PS'
+    USS = 'USS'
+    
     def __init__(self):
+        self.dsType = None
         self.isPds  = False
         self.currentDir = ''
         self.data = []
@@ -63,7 +73,6 @@ class myFtpClass(FtpInfo):
     
     def __init__(self, ftpInfo):
         
-        self.errMsg = ""
         self.listOutput = FtpResult()
         if not ftpInfo:
             self.ftpInfo = self.getFtpInfo()
@@ -76,155 +85,158 @@ class myFtpClass(FtpInfo):
         dialog.exec_()
         
         return dialog.ftpInfo
-
-#
-#
-#
+    
 
     @staticmethod
     def validateFtpInfo(ftpInfo):
         returnStatus = False
-
+        
+        logger.info('validateFtpInfo: {}'.format(ftpInfo.remoteSystem))
         try:
             ftp = FTP(ftpInfo.remoteSystem)
+            ftp.login(user=ftpInfo.userName, passwd=ftpInfo.password)
             
-            rc = ftp.login(user=ftpInfo.userName, passwd=ftpInfo.password)
+            rc = ftp.getwelcome()
             logger.info(rc)
-
+            
+            if   ('IBM VM' in rc):
+                ftpInfo.systemType = FtpInfo.ZVM
+            elif ('IBM FTP' in rc):
+                ftpInfo.systemType = FtpInfo.ZOS
+            else:
+                ftpInfo.systemType = FtpInfo.USS
+            
             ftp.quit()
             
             returnStatus = True
             
         except all_errors as e:
             MessageBox(str(e))
-            logger.info('Error :' + str(e))
+            logger.error('Error :' + str(e))
 
         return returnStatus
-
-#
-#
-#
-
-    def validateRemoteFile(self, remoteFile):
-        returnStatus = False;
-
-        logger.info('Validate ' + remoteFile);
-
-        try:
-            ftp = FTP(self.ftpInfo.remoteSystem) #For now just use CA11
-            
-            rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
-            logger.info(rc)
-
-            rc = ftp.cwd(remoteFile)
-            logger.info(rc)
-
-            del self.listOutput[:]
-            rc = ftp.retrlines('LIST', self.listCallBack)
-            logger.info(rc)
-
-            rc = ftp.quit()            
-            logger.info(rc)
-            
-            returnStatus = True;
-
-        except all_errors as e: #you can specify type of Exception also
-            MessageBox(str(e))
-            logger.info(str(e))
-
-        return returnStatus
-
 
     def listRemotePath(self, newPath):	
         del self.listOutput.data[:]
         
+        logger.info('listRemotePath: {}'.format(newPath))
         try:
             ftp = FTP(self.ftpInfo.remoteSystem)
-            
-            rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
-            logger.info(rc)
+            ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
             
             rc = ftp.cwd("'" + newPath + "'")
-            if 'partitioned data set' in rc:
-                self.listOutput.isPds = True
-            else:
-                self.listOutput.isPds = False
             logger.info(rc)
             
-            strArr = rc.split("\"")
-            self.listOutput.currentDir = strArr[1]
+            if 'partitioned data set' in rc:
+                self.listOutput.isPds = True
+                self.listOutput.dsType = FtpResult.PDS
+                
+                strArr = rc.split("\"")
+                self.listOutput.currentDir = strArr[1]
+            elif 'name prefix' in rc:
+                self.listOutput.isPds = False
+                self.listOutput.dsType = FtpResult.PS
+                
+                strArr = rc.split("\"")
+                self.listOutput.currentDir = strArr[1]
+            else:
+                self.listOutput.dsType = FtpResult.USS
+                
+                strArr = rc.split(' ')
+                self.listOutput.currentDir = strArr[3]
 
-            rc = ftp.retrlines('LIST', self.listCallBack)
-            logger.info('LISTRC :' + rc)
+            ftp.retrlines('LIST', self.listCallBack)
             
             ftp.quit()   
             
         except all_errors as e:
             MessageBox(str(e))
-            logger.info('Error :' + str(e))
+            logger.error('Error :' + str(e))
 
         return self.listOutput
-
-
+    
     def downloadFile(self, fileName, destName):
         returnStatus = False;
-
+        
+        logger.info('downloadFile: {} to {}'.format(fileName, destName))
         try:
             ftp = FTP(self.ftpInfo.remoteSystem) #For now just use CA11
                     
-            rc = ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
-            logger.info(rc)
-
-            logger.info('Downloading : ' + fileName)
-
+            ftp.login(user=self.ftpInfo.userName, passwd=self.ftpInfo.password)
             file = open(destName, 'w')
+            
             del self.listOutput.data[:]
-            rc = ftp.retrlines('RETR '+ fileName, self.downloadCallBack)
-            logger.info(rc)
+            ftp.retrlines('RETR '+ fileName, self.downloadCallBack)
 
+            logger.info('write data to file')
             for msg in self.listOutput.data:
                 file.write(msg + '\n')
 
             file.close()
             
-            rc = ftp.quit()
-            logger.info(rc)
+            ftp.quit()
 
             returnStatus = True;
 
         except all_errors as e: #you can specify type of Exception also
             MessageBox(str(e))
-            logger.info(str(e))
-
-
+            logger.error(str(e))
 
         return returnStatus
         
     # Process the call back from list 
     def listCallBack(self, string):
-        string = string.strip()
-        strArr = string.split(' ')
-        
-        if self.listOutput.isPds:        
-            newMember = ListMember(strArr[0], 'MEMBER')
-            self.listOutput.data.append(newMember)    
-        else:
-            name = self.listOutput.currentDir + strArr[len(strArr) - 1]
-
-            if 'Not Direct Access Device' in string:
-                dsType = strArr[0]
-            elif 'Error' in string:
-                dsType = 'UNKNOWN'
-            else:
-                dsType = strArr[len(strArr) - 3]
-            
-            newMember = ListMember(name, dsType)
+        newMember = self.parseListMsg(string)
+        if newMember:
             self.listOutput.data.append(newMember)
 
     def downloadCallBack(self, string):
         self.listOutput.data.append(string)
 
-      
+    
+    def parseListMsg(self, string):
+        newMember = None
+        if (self.ftpInfo.systemType == FtpInfo.ZOS):
+            string = string.strip()
+            strArr = string.split(' ')
+        
+            if (self.listOutput.dsType == FtpResult.PDS):        
+                if 'Name' not in string:
+                    newMember = ListMember(strArr[0], 'MEMBER')
+                   
+            elif (self.listOutput.dsType == FtpResult.PS):
+                name = self.listOutput.currentDir + strArr[len(strArr) - 1]
+
+                if 'Dsname' not in name:
+                    if 'Not Direct Access Device' in string:
+                        dsType = strArr[0]
+                    elif 'Error' in string:
+                        dsType = 'UNKNOWN'
+                    else:
+                        dsType = strArr[len(strArr) - 3]
+
+                    newMember = ListMember(name, dsType)
+                
+            elif (self.listOutput.dsType == FtpResult.USS):
+                if not (strArr[0] == 'total'):
+                    name = strArr[len(strArr) - 1]
+            
+                    if 'd' in strArr[0]:
+                        dsType = 'DIR'
+                    else:
+                        dsType = 'FILE'
+            
+                    newMember = ListMember(name, dsType)
+        
+        elif (self.ftpInfo.systemType == FtpInfo.ZVM):
+            string = string.strip()
+            strArr = string.split(' ')
+            
+            print(strArr)
+            
+        return newMember
+    
+    
 if __name__ == '__main__':        
     app = QtGui.QApplication(sys.argv)
     myFtpClass(None)

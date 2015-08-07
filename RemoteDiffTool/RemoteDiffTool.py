@@ -10,7 +10,7 @@ from PyQt4 import QtGui, uic
 from RemoteBrowse import RemoteBrowseClass
 from MyFTP import myFtpClass
 
-logger = Logger.setup_custom_logger('root')
+logger = Logger.setup_custom_logger(__name__)
 
 from_class = uic.loadUiType("ui\RemoteDiffTool.ui")[0]   # load the ui
 
@@ -64,7 +64,6 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
                 
             os.chdir(self.compareDir)
             
-#            self.ftp1.validateRemoteFile(file1)
             self.logMessage("Downloading {} ...".format(file1))
             if not self.ftp1.downloadFile(file1, self.compareFile1):
                 self.logError("Download {} failed".format(file1))
@@ -72,9 +71,6 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
                 return
             else:
                 self.logMessage("Download {} completed".format(file1))
-#            else:
-#                self.logError("Validation {} failed".format(file1))
-#                return    
 
         if self.radioButton_Path2_Local.isChecked():
             self.compareFile2 = file2
@@ -94,9 +90,6 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
                 return
             else:
                 self.logMessage("Download {} completed".format(file2))
-#            else:
-#                self.logError("Validation {} failed".format(file2))
-#                return   
         
         self.logMessage('Start comparing 2 files')
         self.invokeCompare(self.compareFile1, self.compareFile2)
@@ -117,6 +110,7 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
                 self.comboBox_Path1.addItem(fileName)
     
             self.comboBox_Path1.setCurrentIndex(self.comboBox_Path1.findText(fileName))
+            self.logMessage('Set File 1 to: {}'.format(fileName))
 
 
     def btn_Browse2_Clicked(self):
@@ -133,6 +127,7 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
                 index = self.comboBox_Path2.addItem(fileName)
 
             self.comboBox_Path2.setCurrentIndex(self.comboBox_Path2.findText(fileName))
+            self.logMessage('Set File 2 to: {}'.format(fileName))
 
 
     def btn_Remoted1_Clicked(self):

@@ -17,8 +17,8 @@ def setup_custom_logger(name):
     logger.addHandler(handler)
     logger.addHandler(fldHandler)
     
-    customHandler = myHandler()
-    logger.addHandler(customHandler)
+#    customHandler = myHandler()
+#    logger.addHandler(customHandler)
     return logger
 
 class myHandler(logging.Handler):
@@ -27,7 +27,8 @@ class myHandler(logging.Handler):
         pass
         
     def emit(self, record):
-        print("Emit" + record.getMessage());
+        pass
+    #    print("Emit" + record.getMessage());
         
 
 def MessageBox(message):
