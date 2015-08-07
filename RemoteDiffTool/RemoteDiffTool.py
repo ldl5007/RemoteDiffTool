@@ -14,8 +14,11 @@ logger = Logger.setup_custom_logger(__name__)
 
 from_class = uic.loadUiType("ui\RemoteDiffTool.ui")[0]   # load the ui
 
-class MyWindowClass(QtGui.QMainWindow, from_class):
+class RemoteDiffTool(QtGui.QMainWindow, from_class):
 
+    __PRODUCT_VERSION = '01.03'
+    __PRODUCT_NAME    = 'Remote Diff Tool'
+    
     compareDir   = os.getcwd() + '\Temp'
     compareFile1 = 'tempFile1'
     compareFile2 = 'tempFile2'
@@ -28,6 +31,8 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
 
         self.ftp1 = None
         self.ftp2 = None
+
+        self.setWindowTitle('{}   Ver {}'.format(self.__PRODUCT_NAME, self.__PRODUCT_VERSION))
 
         self.radioButton_Path1_Local.setChecked(True)
         self.radioButton_Path2_Local.setChecked(True)
@@ -155,7 +160,7 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
 
     def logMessage(self, message, *msgType): 
         if ('WARNING' in msgType):
-            self.textEdit_Log.setTextColor(QtGui.QColor('yellow'))
+            self.textEdit_Log.setTextColor(QtGui.QColor('blue'))
         elif ('ERROR' in msgType):
             self.textEdit_Log.setTextColor(QtGui.QColor('red'))
 
@@ -169,6 +174,6 @@ class MyWindowClass(QtGui.QMainWindow, from_class):
 
 
 app = QtGui.QApplication(sys.argv)
-myWindow = MyWindowClass(None)
+myWindow = RemoteDiffTool(None)
 myWindow.show()
 app.exec_()
