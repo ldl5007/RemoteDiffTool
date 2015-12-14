@@ -1,6 +1,7 @@
 # Logger is a singleton class
 
 import logging
+import os
 from PyQt4 import QtGui
 
 def setup_custom_logger(name):
@@ -9,6 +10,10 @@ def setup_custom_logger(name):
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
 
+    # Check if the log folder is not create then create a new one
+    if not os.path.exists('log'):
+        os.makedirs('log')
+                                    
     fldHandler = logging.FileHandler('log\log.txt')
     fldHandler.setFormatter(formatter)
 
