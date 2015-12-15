@@ -27,7 +27,7 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
 
     __ACCEPTING_TYPES = ['MEMBER', 'PS', 'FILE']
 
-    def __init__(self, parent = None, ftpInfo = None):
+    def __init__(self, parent = None, ftpInfo = None, startPath = ''):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
@@ -57,10 +57,15 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
 
         self.treeView_Browse.expanded.connect(self.treeView_Expanded)
 
-    @staticmethod
-    def getRemotePath(parent = None, ftpInfo = None):
+        # Check if the start Path is set, if it is then try to pull that directory up 
+        if startPath:
+            self.setDefaultPath(startPath)
 
-        dialog = RemoteBrowseClass(parent, ftpInfo)
+
+    @staticmethod
+    def getRemotePath(parent = None, ftpInfo = None, startPath = ''):
+
+        dialog = RemoteBrowseClass(parent, ftpInfo, startPath)
         dialog.exec_()
 
         return dialog.selectedString
@@ -85,6 +90,10 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
                 self.updateTreeView(newList)
 
     def setDefaultPath(self, newPath):
+        # validate path
+        if '(' in newPath and ')' in newPath:
+            newPath = newPath[: newPath.find('(')]
+        
         index = self.comboBox_Path.findText(newPath)
         if index == -1:
             self.comboBox_Path.addItem(newPath)

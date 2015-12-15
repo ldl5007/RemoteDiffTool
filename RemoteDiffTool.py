@@ -102,11 +102,14 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
 
     def btn_Browse1_Clicked(self):
         fileName = ''
+        currentText = self.comboBox_Path1.currentText()
+        logger.debug(currentText);
+        
         if self.radioButton_Path1_Local.isChecked():
-            fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open File','')
+            fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open File', currentText)
 
         else:
-            fileName = RemoteBrowseClass.getRemotePath(None, self.ftp1.ftpInfo)
+            fileName = RemoteBrowseClass.getRemotePath(None, self.ftp1.ftpInfo, currentText)
 
 
         if fileName:
@@ -120,11 +123,14 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
 
     def btn_Browse2_Clicked(self):
         fileName = ''
+        currentText = self.comboBox_Path2.currentText()
+        logger.debug(currentText)
+        
         if self.radioButton_Path2_Local.isChecked():
-            fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open File','')
+            fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open File',currentText)
 
         else:
-            fileName = RemoteBrowseClass.getRemotePath(None, self.ftp2.ftpInfo)
+            fileName = RemoteBrowseClass.getRemotePath(None, self.ftp2.ftpInfo, currentText)
 
         if fileName:
             index = self.comboBox_Path2.findText(fileName)
