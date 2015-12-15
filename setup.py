@@ -29,7 +29,7 @@ includes = ["atexit","re"]
 
 setup(
         name = application_title,
-        version = "0.1",
+        version = "1.3",
         description = "Remote Diff utility",
         options = {"build_exe" : {"include_files":include_files, "includes" : includes }},
         executables = [Executable(main_python_file, base = base)])
