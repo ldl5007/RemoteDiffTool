@@ -198,7 +198,8 @@
     <property name="title">
      <string>Menu</string>
     </property>
-    <addaction name="actionConfig"/>
+    <addaction name="menuConfig"/>
+    <addaction name="menuAbout"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -208,9 +209,14 @@
     <string>Item 1</string>
    </property>
   </action>
-  <action name="actionConfig">
+  <action name="menuConfig">
    <property name="text">
     <string>Config</string>
+   </property>
+  </action>
+  <action name="menuAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

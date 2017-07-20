@@ -43,6 +43,10 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
 
         self.radioButton_Path1_Remote.clicked.connect(self.btn_Remoted1_Clicked)
         self.radioButton_Path2_Remote.clicked.connect(self.btn_Remoted2_Clicked)
+        
+        self.menuConfig.triggered[()].connect(self.menu_Config_clicked)
+        self.menuAbout.triggered[()].connect(self.menu_About_Clicked)
+
 
     def btn_Compare_Clicked(self):
         file1 = self.comboBox_Path1.currentText()
@@ -157,6 +161,12 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
             self.logWarning("Remote system 2 is not set")
         else:
             self.logMessage("Remote System 1: " + self.ftp1.ftpInfo.remoteSystem)
+
+    def menu_About_Clicked(self):
+        self.logMessage("Menu about is clicked")
+
+    def menu_Config_clicked(self):
+        self.logMessage("Menu config is clicked")
 
     def logWarning(self, message):
         self.logMessage(message, "WARNING")
