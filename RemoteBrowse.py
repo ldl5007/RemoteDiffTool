@@ -30,7 +30,8 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
     def __init__(self, parent = None, ftpInfo = None, startPath = ''):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
-
+        
+        self.setWindowIcon(QtGui.QIcon('img/RDT.ico'))
         self.itemDict = {}
         self.ftpClass = myFtpClass(ftpInfo)
 

@@ -15,8 +15,8 @@ class ListMember(object):
         self.type = ftype
 
 class FtpInfo(object):
-    ZVM = 'ZVM'
-    ZOS = 'ZOS'
+    ZVM = 'zVM'
+    ZOS = 'zOS'
     USS = 'USS'
 
     def __init__(self, system, name, password):
@@ -41,6 +41,7 @@ class FtpInfoDialog(QtGui.QDialog, from_class):
     def __init__(self, parent = None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
+        self.setWindowIcon(QtGui.QIcon('img/RDT.ico'))
 
         self.ftpInfo = None
         self.pushButton_Ok.clicked.connect(self.btn_Ok_Clicked)

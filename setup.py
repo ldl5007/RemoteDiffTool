@@ -36,7 +36,7 @@ build_exe_options = {"optimize": 2 ,"include_files":include_files, "includes" : 
 
 setup(
         name = application_title,
-        version = "1.3",
+        version = "1.4",
         description = "Remote Diff utility",
         options = {"build_exe" : build_exe_options},
         executables = [Executable(main_python_file, base = base, icon = "img/RDT.ico")])

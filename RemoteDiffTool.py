@@ -16,7 +16,7 @@ from_class = uic.loadUiType("ui\RemoteDiffTool.ui")[0]   # load the ui
 
 class RemoteDiffTool(QtGui.QMainWindow, from_class):
 
-    __PRODUCT_VERSION = '01.03'
+    __PRODUCT_VERSION = '1.4'
     __PRODUCT_NAME    = 'Remote Diff Tool'
 
     compareDir   = os.getcwd() + '\Temp'
@@ -30,8 +30,9 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
         self.setupUi(self)
 
         self.ftp1 = None
-        self.ftp2 = None
+        self.ftp2 = None        
 
+        self.setWindowIcon(QtGui.QIcon('img/RDT.ico'))
         self.setWindowTitle('{}   Ver {}'.format(self.__PRODUCT_NAME, self.__PRODUCT_VERSION))
 
         self.radioButton_Path1_Local.setChecked(True)
