@@ -9,6 +9,7 @@ from PyQt4 import QtGui, uic
 
 from RemoteBrowse import RemoteBrowseClass
 from MyFTP import myFtpClass
+from Config import ConfigDialog
 
 logger = Logger.setup_custom_logger(__name__)
 
@@ -152,6 +153,8 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
             self.radioButton_Path1_Local.toggle()
             self.logWarning("Remote system 1 is not set")
         else:
+            label = "Remote: {}".format(self.ftp1.ftpInfo.remoteSystem)
+            self.radioButton_Path1_Remote.setText(label)
             self.logMessage("Remote System 1: " + self.ftp1.ftpInfo.remoteSystem)
 
 
@@ -161,6 +164,8 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
             self.radioButton_Path2_Local.toggle()
             self.logWarning("Remote system 2 is not set")
         else:
+            label = "Remote: {}".format(self.ftp2.ftpInfo.remoteSystem)
+            self.radioButton_Path2_Remote.setText(label)
             self.logMessage("Remote System 1: " + self.ftp1.ftpInfo.remoteSystem)
 
     def menu_About_Clicked(self):
@@ -168,6 +173,8 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
 
     def menu_Config_clicked(self):
         self.logMessage("Menu config is clicked")
+        ConfigDialog().exec_()
+        
 
     def logWarning(self, message):
         self.logMessage(message, "WARNING")
