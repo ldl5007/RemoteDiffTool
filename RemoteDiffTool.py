@@ -11,7 +11,6 @@ from RemoteBrowse import RemoteBrowseClass
 from MyFTP import myFtpClass
 from Config import ConfigDialog
 from About import AboutDialog
-import About
 
 logger = Logger.setup_custom_logger(__name__)
 
@@ -21,7 +20,6 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
 
     __PRODUCT_VERSION = '1.4'
     __PRODUCT_NAME    = 'Remote Diff Tool'
-    __PRODUCT_HOME_PAGE = 'https://github.com/ldl5007/RemoteDiffTool/releases'
 
     compareDir   = os.getcwd() + '\Temp'
     compareFile1 = 'tempFile1'
@@ -177,7 +175,6 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
         aboutDlg.setTitle(self.__PRODUCT_NAME)
         aboutDlg.setVersion(self.__PRODUCT_VERSION)
         aboutDlg.setName(self.__PRODUCT_NAME)
-        aboutDlg.setHomepage(self.__PRODUCT_HOME_PAGE)
         aboutDlg.exec_()
 
     def menu_Config_clicked(self):

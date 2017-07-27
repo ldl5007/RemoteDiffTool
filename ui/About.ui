@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
+    <width>441</width>
     <height>159</height>
    </rect>
   </property>
@@ -29,11 +29,14 @@
     <rect>
      <x>100</x>
      <y>10</y>
-     <width>291</width>
-     <height>81</height>
+     <width>321</width>
+     <height>84</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout_Info">
+    <property name="rowWrapPolicy">
+     <enum>QFormLayout::WrapAllRows</enum>
+    </property>
     <item row="0" column="0">
      <widget class="QLabel" name="label_Version">
       <property name="text">
@@ -49,9 +52,34 @@
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QLabel" name="label_Homepage">
+     <widget class="QLabel" name="label">
       <property name="text">
        <string>Homepage:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="label_Homepage">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>34</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/ldl5007/RemoteDiffTool/releases&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/ldl5007/RemoteDiffTool/releases&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -60,14 +88,14 @@
   <widget class="QWidget" name="formLayoutWidget_3">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>320</x>
      <y>100</y>
      <width>101</width>
      <height>41</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout_Button">
-    <item row="0" column="0">
+    <item row="0" column="1">
      <widget class="QPushButton" name="pushButton_Ok">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

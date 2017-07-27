@@ -6,7 +6,6 @@ from PyQt4 import QtGui, uic
 from_class = uic.loadUiType('ui/About.ui')[0]
 
 class AboutDialog(QtGui.QDialog, from_class):
-    HOMEPAGE = 'this homepage'
     
     def __init__(self, parent = None):
         QtGui.QDialog.__init__(self, parent)
@@ -22,9 +21,6 @@ class AboutDialog(QtGui.QDialog, from_class):
         
     def setName(self, name):
         self.label_Name.setText(name)
-        
-    def setHomepage(self, homepage):
-        self.label_Homepage.setText("Homepage: {}".format(homepage))
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
