@@ -2,7 +2,7 @@
 
 import logging
 import os
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 def setup_custom_logger(name):
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
@@ -37,6 +37,6 @@ class myHandler(logging.Handler):
 
 
 def MessageBox(message):
-    msgBox = QtGui.QMessageBox()
+    msgBox = QtWidgets.QMessageBox()
     msgBox.setText(message)
     msgBox.exec()

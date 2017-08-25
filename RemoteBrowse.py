@@ -4,9 +4,10 @@
 
 import sys
 import Logger
-from PyQt4 import QtCore, QtGui, uic
-from PyQt4.QtCore import pyqtSlot,SIGNAL,SLOT
-from PyQt4.QtGui  import QStandardItem, QAbstractItemView
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui  import QStandardItem
+from PyQt5.QtWidgets import QAbstractItemView
 from MyFTP import myFtpClass, FtpResult
 from Logger import MessageBox
 
@@ -19,7 +20,7 @@ class TreeRow(object):
         self.nameCol = nameCol
         self.typeCol = typeCol
 
-class RemoteBrowseClass(QtGui.QDialog, from_class):
+class RemoteBrowseClass(QtWidgets.QDialog, from_class):
     selectedString = ''
 
     __NAME_COLUMN = 0
@@ -28,7 +29,7 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
     __ACCEPTING_TYPES = ['MEMBER', 'PS', 'FILE']
 
     def __init__(self, parent = None, ftpInfo = None, startPath = ''):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         
         self.setWindowIcon(QtGui.QIcon('img/RDT.ico'))
@@ -36,8 +37,7 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
         self.ftpClass = myFtpClass(ftpInfo)
 
         comboBox = self.comboBox_Path
-        comboBox.connect(comboBox,SIGNAL("currentIndexChanged(int)"),
-					self, SLOT("onIndexChange(int)"))
+        comboBox.currentIndexChanged.connect(self.onIndexChange)
 
         self.pushButton_Ok.clicked.connect(self.btn_Ok_Clicked)
         self.pushButton_Cancel.clicked.connect(self.btn_Cancel_Clicked)
@@ -103,6 +103,7 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
 
 
     def updateTreeView(self, newList):
+        logger.info('updateTreeView')
         scrollItem = None
         isExpand   = False
         parentItem = None
@@ -245,5 +246,5 @@ class RemoteBrowseClass(QtGui.QDialog, from_class):
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     RemoteBrowseClass.getRemotePath(None)

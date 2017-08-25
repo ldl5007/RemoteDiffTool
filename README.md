@@ -4,6 +4,10 @@ This utility is created from the needed for comparing the content a file which w
 
 # Requirement:
 - FTP access permission for the remote system.
+- PyQt5
+
+# Version 1.4
+- Update to PyQt5
 
 # Version 1.3
 

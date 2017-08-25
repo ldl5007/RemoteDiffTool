@@ -1,14 +1,14 @@
 # About Module
 
 import sys
-from PyQt4 import QtGui, uic
+from PyQt5 import QtWidgets, QtGui, uic
 
 from_class = uic.loadUiType('ui/About.ui')[0]
 
-class AboutDialog(QtGui.QDialog, from_class):
+class AboutDialog(QtWidgets.QDialog, from_class):
     
     def __init__(self, parent = None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('img/RDT.ico'))
         self.pushButton_Ok.clicked.connect(self.close)
@@ -23,6 +23,6 @@ class AboutDialog(QtGui.QDialog, from_class):
         self.label_Name.setText(name)
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     dialog = AboutDialog(None)
     dialog.exec_()

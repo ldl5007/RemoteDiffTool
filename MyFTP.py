@@ -2,7 +2,7 @@
 
 import sys
 import Logger
-from PyQt4 import QtGui, uic
+from PyQt5 import QtWidgets, QtGui, uic
 from ftplib import FTP, all_errors
 from Logger import MessageBox
 
@@ -36,10 +36,10 @@ class FtpResult(object):
         self.currentDir = ''
         self.data = []
 
-class FtpInfoDialog(QtGui.QDialog, from_class):
+class FtpInfoDialog(QtWidgets.QDialog, from_class):
 
     def __init__(self, parent = None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('img/RDT.ico'))
 
@@ -47,7 +47,7 @@ class FtpInfoDialog(QtGui.QDialog, from_class):
         self.pushButton_Ok.clicked.connect(self.btn_Ok_Clicked)
         self.pushButton_Cancel.clicked.connect(self.btn_Cancel_Clicked)
 
-        self.lineEdit_Password.setEchoMode(QtGui.QLineEdit.Password)
+        self.lineEdit_Password.setEchoMode(QtWidgets.QLineEdit.Password)
 
     def btn_Ok_Clicked(self):
         system = self.lineEdit_System.text()
@@ -239,6 +239,6 @@ class myFtpClass(FtpInfo):
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     myFtpClass(None)
 

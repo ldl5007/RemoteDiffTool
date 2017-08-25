@@ -5,7 +5,7 @@ import os
 import subprocess
 import Logger
 
-from PyQt4 import QtGui, uic
+from PyQt5 import QtWidgets, QtGui, uic
 
 from RemoteBrowse import RemoteBrowseClass
 from MyFTP import myFtpClass
@@ -16,7 +16,7 @@ logger = Logger.setup_custom_logger(__name__)
 
 from_class = uic.loadUiType("ui\RemoteDiffTool.ui")[0]   # load the ui
 
-class RemoteDiffTool(QtGui.QMainWindow, from_class):
+class RemoteDiffTool(QtWidgets.QMainWindow, from_class):
 
     __PRODUCT_VERSION = '1.4'
     __PRODUCT_NAME    = 'Remote Diff Tool'
@@ -28,7 +28,7 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
     winMergeDir = os.getcwd() + '\winMerge\WinMergePortable.exe'
 
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
         self.ftp1 = None
@@ -47,8 +47,8 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
         self.radioButton_Path1_Remote.clicked.connect(self.btn_Remoted1_Clicked)
         self.radioButton_Path2_Remote.clicked.connect(self.btn_Remoted2_Clicked)
         
-        self.menuConfig.triggered[()].connect(self.menu_Config_clicked)
-        self.menuAbout.triggered[()].connect(self.menu_About_Clicked)
+        self.menuConfig.triggered.connect(self.menu_Config_clicked)
+        self.menuAbout.triggered.connect(self.menu_About_Clicked)
 
 
     def btn_Compare_Clicked(self):
@@ -113,7 +113,7 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
         logger.debug(currentText);
         
         if self.radioButton_Path1_Local.isChecked():
-            fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open File', currentText)
+            fileName = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', currentText)
 
         else:
             fileName = RemoteBrowseClass.getRemotePath(None, self.ftp1.ftpInfo, currentText)
@@ -134,7 +134,7 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
         logger.debug(currentText)
         
         if self.radioButton_Path2_Local.isChecked():
-            fileName = QtGui.QFileDialog.getOpenFileName(self, 'Open File',currentText)
+            fileName = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File',currentText)
 
         else:
             fileName = RemoteBrowseClass.getRemotePath(None, self.ftp2.ftpInfo, currentText)
@@ -180,7 +180,6 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
     def menu_Config_clicked(self):
         self.logMessage("Menu config is clicked")
         ConfigDialog().exec_()
-        
 
     def logWarning(self, message):
         self.logMessage(message, "WARNING")
@@ -203,7 +202,7 @@ class RemoteDiffTool(QtGui.QMainWindow, from_class):
         subprocess.call([self.winMergeDir, file1, file2])
 
 
-app = QtGui.QApplication(sys.argv)
+app = QtWidgets.QApplication(sys.argv)
 myWindow = RemoteDiffTool(None)
 myWindow.show()
 app.exec_()
